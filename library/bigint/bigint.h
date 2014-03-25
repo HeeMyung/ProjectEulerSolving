@@ -1,5 +1,5 @@
 #ifndef __BIGINT_H_
-#define __BIGING_H_
+#define __BIGINT_H_
 
 #include <vector>
 #include <string>

@@ -6,111 +6,143 @@
 #include <vector>
 #include <queue>
 
-std::map< std::set<int>, long long > answerSet;
-HeeM::Primes primeObject;
-std::set< std::set< std::set<int > > > answeredSet;
+int totalCount = 0;
+std::vector<int> checkVec;
+std::set<int> numberSet;
+std::vector<int> debugVec;
 
-
-long long registerAndReturn(std::set<int> inset, long long answer)
+std::vector<int> Parse(int number)
 {
-	answerSet[inset] = answer;
-	
-	printf("( ");
-	for(std::set<int>::iterator setIter = inset.begin(); setIter != inset.end(); ++setIter)
+	std::vector<int> ret;
+	while(number)
 	{
-		printf("%d ", *setIter);
+		int n = number%10;
+		ret.push_back(n);
+		number /= 10;
 	}
-	printf(") : %lld\n", answer);
-	return answer;
+	return ret;
 }
 
-std::set<int> SetSubt(std::set<int> a, std::set<int> b)
+bool OkCheck(std::vector<int>& parsed)
 {
-	for(std::set<int>::iterator subIter = b.begin(); subIter != b.end(); ++subIter)
+	for(auto iter = parsed.begin(); iter != parsed.end(); ++iter)
 	{
-		a.erase(*subIter);
+		if( numberSet.find(*iter) != numberSet.end() )
+			return false;
 	}
-	return a;
+	return true;
 }
 
-void printVec(std::vector<int> vec)
+void PrintCurset()
 {
-	/*
-	printf("( ");
-	for(std::vector<int>::iterator iter = vec.begin(); iter != vec.end(); ++iter)
+	printf("{ ");
+	for(auto iter = debugVec.begin(); iter != debugVec.end(); ++iter)
 	{
-		printf("%d ", *iter);
-	}
-	printf(")\n");
-	*/
-}
-
-long long GetCount(std::set< std::set<int> > prevSets, std::set<int> inset)
-{
-	if( inset.size() <= 0 )
-		return 0;
-	
-	std::map< std::set<int>, long long >::iterator findIter = answerSet.find(inset);
-	if( findIter != answerSet.end() )
-		return findIter->second;
-	if( inset.size() == 1 )
-	{
-		return registerAndReturn(inset, primeObject.IsPrime(*(inset.begin())) ? 1 : 0);
-	}
-
-	long long sum = 0;
-	HeeM::Combination<int> c;
-	for(std::set<int>::iterator iter = inset.begin(); iter != inset.end(); ++iter)
-	{
-		c.AddElement(*iter);
-	}
-	for(int i = 1; i <= inset.size(); ++i)
-	{
-		c.Start(i);
-		do
+		if( iter != debugVec.begin() )
 		{
-			std::vector<int> selection;
-			c.GetSelection(selection);
-			printVec(selection);
-			HeeM::Permutation<int> p;
-			std::set<int> genSubSet;
-			for(std::vector<int>::iterator iter = selection.begin(); iter != selection.end(); ++iter)
-			{
-				p.AddElement(*iter);
-				genSubSet.insert(*iter);
-			}
-			p.Start();
-			do
-			{
-				std::vector<int> curstate;
-				int num = 0;
-				p.GetCurrentSelection(curstate);
-				for(std::vector<int>::iterator iter = curstate.begin(); iter != curstate.end(); ++iter)
-				{`
-					num = (num*10) + *iter;
-				}
-				if( primeObject.IsPrime(num) )
-				{
-					sum += GetCount(SetSubt(inset, genSubSet));
-				}
-			}while(p.ProcessNextState());
-			
-		}while(c.ProcessNextSelection());
+			printf(", ");
+		}
+		printf("%d", *iter);
+	}
+	printf(" }\n");
+}
+
+void Check(unsigned int index)
+{
+	int number = checkVec[index];
+
+	std::vector<int> parsed = Parse(number);
+
+	if( !OkCheck(parsed) )
+		return;
+
+	debugVec.push_back(number);
+	for(auto iter = parsed.begin(); iter != parsed.end(); ++iter)
+	{
+		numberSet.insert(*iter);
+	}
+//	printf("Current Set:");
+//	PrintCurset();
+
+	bool fullset = true;
+	for(int i = 1; i <= 9; ++i)
+	{
+		if( numberSet.find(i) == numberSet.end() )
+		{
+			fullset = false;
+			break;
+		}
+	}
+	if( fullset )
+	{
+		++totalCount;
+		printf("찾았다:");
+		PrintCurset();
+		for(auto iter = parsed.begin(); iter != parsed.end(); ++iter)
+		{
+			numberSet.erase(*iter);
+		}
+		debugVec.pop_back();
+		return;
 	}
 
-	return registerAndReturn(inset, sum);
+	if( parsed.size() > 9 - numberSet.size() )
+		// 더이상의 답은 존재할 수 없다.
+	{
+		for(auto iter = parsed.begin(); iter != parsed.end(); ++iter)
+		{
+			numberSet.erase(*iter);
+		}
+		debugVec.pop_back();
+		return;
+	}
+
+	while(++index < checkVec.size())
+	{
+		Check(index);
+	}
+	for(auto iter = parsed.begin(); iter != parsed.end(); ++iter)
+	{
+		numberSet.erase(*iter);
+	}
+	debugVec.pop_back();
+}
+
+bool IsElementDigit(long long num)
+{
+	std::set<int> s;
+	while(num > 0)
+	{
+		int n = num%10;
+		if( n == 0 )
+			return false;
+		if( s.find(n) != s.end() )
+			return false;
+		s.insert(n);
+		num /= 10;
+	}
+	return true;
 }
 
 int main()
 {
-	primeObject.Init(7);
+	HeeM::Primes primeObject;
+	primeObject.Init(8);
 
-	std::set<int> initSet;
-	for(int i = 1; i <= 9; ++i)
+	for(auto iter = primeObject.GetPrimes().begin(); iter != primeObject.GetPrimes().end(); ++iter)
 	{
-		initSet.insert(i);
+		if( !IsElementDigit(*iter) )
+			continue;
+		checkVec.push_back((int)*iter);
 	}
 
-	printf("Answer : %lld\n", GetCount(initSet));
+	numberSet.clear();
+	debugVec.clear();
+	printf("Start!\n");
+	for(int i = 0; i < checkVec.size(); ++i)
+	{
+		Check(i);
+	}
+	printf("Answer : %d\n", totalCount);
 	return 0;
 }
