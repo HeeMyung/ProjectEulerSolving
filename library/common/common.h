@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <set>
 
 namespace HeeM
 {
@@ -28,5 +29,18 @@ namespace HeeM
 			return 1;
 		}
 		return power(n, r - T((int)1)) * n;
+	}
+	void print_set(const std::set<int> t)
+	{
+		printf("{ ");
+		for(auto iter = t.cbegin(); iter != t.cend(); ++iter)
+		{
+			if( iter != t.begin() )
+			{
+				printf(", ");
+			}
+			printf("%d", *iter);
+		}
+		printf(" }");
 	}
 }

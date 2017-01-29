@@ -1,5 +1,6 @@
 #include "prime.h"
 #include <math.h>
+#include <algorithm>
 
 namespace HeeM
 {
@@ -55,5 +56,54 @@ namespace HeeM
 			}
 		}
 		return false;
+	}
+
+	long long Primes::operator[](int index)
+	{
+		if( primeList.size() <= index )
+		{
+			return false;
+		}
+		return primeList[index];
+	}
+	bool Primes::IsCoprime(long long a, long long b)
+	{
+		auto min = std::min(a, b);
+		auto max = std::max(a, b);
+		auto primeIter = primeList.begin();
+		while(min > 1 && primeIter != primeList.end())
+		{
+			bool isDivider = false;
+			while(min > 1 && min % (*primeIter) == 0)
+			{
+				isDivider = true;
+				min /= *primeIter;
+			}
+			if( isDivider && max % *primeIter == 0 )
+				return false;
+			++primeIter;
+		}
+		return true;
+	}
+	long long Primes::Rad(long long n)
+	{
+		long long cp = n;
+		long long ret = 1;
+		auto primeIter = primeList.begin();
+		while(n > 1 && primeIter != primeList.end())
+		{
+			bool isDivider = false;
+			while(n > 1 && n % (*primeIter) == 0)
+			{
+				isDivider = true;
+				n /= *primeIter;
+			}
+			if( isDivider )
+				ret *= *primeIter;
+			++primeIter;
+		}
+		if( ret == 1 )
+			return cp;
+		return ret;
 	}
 }
