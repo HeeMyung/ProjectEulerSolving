@@ -1,0 +1,8 @@
+add_subdirectory ("bigint")
+add_subdirectory ("common")
+add_subdirectory ("graph")
+add_subdirectory ("iterator")
+add_subdirectory ("matrix")
+add_subdirectory ("permutation")
+add_subdirectory ("prime")
+add_subdirectory ("special_sumset")
