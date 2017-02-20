@@ -1,7 +1,7 @@
 #include <stdio.h>
-#include "library/prime/prime.h"
-#include "library/permutation/permutation.h"
-#include "library/permutation/combination.h"
+#include "prime.h"
+#include "permutation.h"
+#include "combination.h"
 #include <set>
 #include <vector>
 #include <queue>

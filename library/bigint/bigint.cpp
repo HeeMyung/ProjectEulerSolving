@@ -1,7 +1,5 @@
 #include "bigint.h"
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
+#include <vector>
 
 #define checkpoint(x)	{printf("check %s %s %d\n", x,  __FILE__, __LINE__);}
 #define big(a,b)	(a > b ? a : b)
@@ -156,7 +154,6 @@ void BigInt::operator++(int)
 	}
 	if(	m_internal[i] > 9 )
 	{
-		// 크기 늘어남.. ㄷㄷ; ㅠ
 		std::vector<char> newInter;
 		newInter.resize(m_internal.size()+1);
 		memcpy(&newInter[0], &m_internal[0], m_internal.size());
@@ -355,7 +352,7 @@ BigInt BigInt::operator/(const BigInt& bi) const
 	for(i = divideeSize - dividerSize; i >= 0; --i)
 	{
 		//printf("current cpy : %s\n", (const char*)cpy);
-		if( cpy == BigInt(0) )	// 나누어 떨어져버림
+		if( cpy == BigInt(0) )
 		{
 			break;
 		}
@@ -406,7 +403,7 @@ BigInt BigInt::operator%(const BigInt& bi) const
 	cpy = *this;
 	for(i = divideeSize - dividerSize; i >= 0; --i)
 	{
-		if( cpy == BigInt(0) )	// 나누어 떨어져버림
+		if( cpy == BigInt(0) )
 		{
 			return BigInt(0);
 		}

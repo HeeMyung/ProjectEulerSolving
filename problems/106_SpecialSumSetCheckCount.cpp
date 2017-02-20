@@ -1,7 +1,6 @@
-#include <stdio.h>
 #include <map>
 #include <vector>
-#include "library/common/common.h"
+#include "common.h"
 
 
 struct state
@@ -40,7 +39,7 @@ int main()
 
 struct comp
 {
-	bool operator()(const state& a, const state& b)
+	bool operator()(const state& a, const state& b) const
 	{
 		if( a.plus < b.plus )
 			return true;
@@ -62,7 +61,7 @@ struct comp
 		else if( !a.check && b.check )
 			return false;
 
-		//printf("완벽히 같넹(%d,%d), (%d,%d), (%d,%d), (%s,%s)\n", a.plus, b.plus, a.minus, b.minus, a.nowPoint, b.nowPoint, a.check ? "true" : "false", b.check ? "true" : "false");
+		//printf("Perfact Same(%d,%d), (%d,%d), (%d,%d), (%s,%s)\n", a.plus, b.plus, a.minus, b.minus, a.nowPoint, b.nowPoint, a.check ? "true" : "false", b.check ? "true" : "false");
 		return false;
 	}
 };

@@ -1,4 +1,4 @@
-#include "library/bigint/bigint.h"
+#include "bigint.h"
 #include <stdio.h>
 
 int main()

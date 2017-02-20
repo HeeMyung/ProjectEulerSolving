@@ -1,5 +1,5 @@
-#include "library/common/common.h"
-#include "library/bigint/bigint.h"
+#include "common.h"
+#include "bigint.h"
 
 #define MIN(a,b) ( (a) > (b) ? (b) : (a) )
 #define ABS(a) ( (a) > 0 ? (a) : -(a) )

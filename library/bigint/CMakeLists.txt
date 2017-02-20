@@ -1,0 +1,3 @@
+SET (MY_INCLUDES ${MY_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "includes" FORCE)
+add_library (BigInt bigint.h bigint.cpp)
+SET (MY_LIBS ${MY_LIBS} BigInt CACHE INTERNAL "libs" FORCE)

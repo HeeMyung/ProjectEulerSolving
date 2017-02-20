@@ -1,4 +1,9 @@
+cmake_minimum_required (VERSION 2.6)
+
 Project (ProjectEuler)
 
-include_directories ("${PROJECT_SOURCE_DIR}/library")
-include_directories ("${PROJECT_SOURCE_DIR}/problems")
+#Use solution folders. 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+add_subdirectory ("library")
+add_subdirectory ("problems")

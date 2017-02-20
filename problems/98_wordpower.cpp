@@ -1,7 +1,6 @@
 #include<stdio.h>
 #include"bigint.h"
-#include"list.h"
-#include"stringhash.h"
+#include <set>
 
 void charsort(char* sort)
 {
@@ -38,13 +37,10 @@ int main()
 	char wordlist[2000][30];
 
 
-	STRINGHASHptr realstr,sorted;
-	realstr = newStringHash();
-	sorted = newStringHash();
+	std::set<std::string> realstr,sorted;
 
-	ELEMENT src;
-	ELEMENT *temp;
-	LISTptr li;
+	std::string src;
+	std::list<std::string> li;
 	char *buff = (char*)calloc(30,sizeof(char));
 
 	int count = 0;
@@ -52,7 +48,7 @@ int main()
 	do{
 		//printf("%s\n",word);
 		src = (ELEMENT)word;
-		stringStore(realstr,word,src);
+		realstr.insert(src);
 		strcpy(buff,word);
 		charsort(buff);
 		if( stringIsIn(sorted,buff) == 1 )

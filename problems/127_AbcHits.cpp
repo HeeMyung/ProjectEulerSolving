@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "library/prime/prime.h"
-#include "library/iterater/iterater.h"
+#include "prime.h"
+#include "iterator.h"
 
 HeeM::Primes g_primes;
 

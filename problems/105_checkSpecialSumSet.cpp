@@ -5,7 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <queue>
-#include "library/special_sumset/special_sumset.h"
+#include "special_sumset.h"
 
 int main()
 {

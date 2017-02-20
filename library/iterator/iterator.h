@@ -5,7 +5,7 @@
 #include <vector>
 #include "../common/common.h"
 
-template<typename T, std::vector<T>(*Generater)(const T&), typename Pred = std::less<T>>
+template<typename T, std::vector<T>(*Generater)(const T&), typename Pred = std::less<T> >
 class PriorityIterater
 {
 public:

@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "library/matrix/matrix.h"
+#include "matrix.h"
 
 std::vector<long long> g_answerList;
 

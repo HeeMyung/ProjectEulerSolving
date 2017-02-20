@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "library/prime/prime.h"
-#include "library/common/common.h"
+#include "prime.h"
+#include "common.h"
 #include <set>
 #include <queue>
 

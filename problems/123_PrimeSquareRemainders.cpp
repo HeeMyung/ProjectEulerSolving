@@ -1,5 +1,5 @@
 #include<stdio.h>
-#include "library/prime/prime.h"
+#include "prime.h"
 
 long long Test(long long a, long long n)
 {

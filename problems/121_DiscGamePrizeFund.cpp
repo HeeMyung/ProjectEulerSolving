@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <map>
-#include "library/common/common.h"
+#include "common.h"
 
 std::map<std::pair<int,int>, long long> g_winCount;
 
