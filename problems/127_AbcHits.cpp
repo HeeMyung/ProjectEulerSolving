@@ -1,34 +1,56 @@
 #include <stdio.h>
 #include "prime.h"
 #include "iterator.h"
+#include <functional>
 
 HeeM::Primes g_primes;
 
-std::map<int, HeeM::Primes::PrimeFactors> primeFactorCache;
-HeeM::Primes::PrimeFactors& GetPrimeFactors(int n)
-{
-	auto found = primeFactorCache.find(n);
-	if (found != primeFactorCache.end())
-		return found->second;
-
-	auto iter = primeFactorCache.insert({ n, HeeM::Primes::PrimeFactors(&g_primes, n) });
-	return iter.first->second;
-}
-
 struct ABC
 {
-	ABC(int _a, int _b) : a(_a), b(_b), c(a+b)
-	{}
+	ABC(int _a, int _b, int _c) : a(_a), b(_b), c(_c)
+	{
+	}
 
 	static std::vector<ABC> Next(const ABC& abc)
 	{
-		std::vector<ABC> ret;
-		for(int i = abc.a+1; i < abc.b; ++i)
-			ret.push_back(ABC(i, abc.b));
+		HeeM::Primes::PrimeFactors& aFactors = g_primes.GetPrimeFactors(abc.a);
+		HeeM::Primes::PrimeFactors& bFactors = g_primes.GetPrimeFactors(abc.b);
+		HeeM::Primes::PrimeFactors& cFactors = g_primes.GetPrimeFactors(abc.c);
 
-		ret.push_back(ABC(1, abc.b+1));
-// 		for (auto& nabc : ret)
-// 			printf("\t(%d,%d,%d)=>(%d,%d,%d)\n", abc.a, abc.b, abc.c, nabc.a, nabc.b, nabc.c);
+		auto& primes = g_primes.GetPrimes();
+
+		std::vector<ABC> ret;
+		auto Adder = [&](long long start, long long limit, long long primeBase, const std::set<long long>& exceptSetA, const std::set<long long>& exceptSetB, std::function<ABC(long long)> generator)
+		{
+			for (auto primeIter = primes.begin(); primeIter != primes.end(); ++primeIter)
+			{
+				auto prime = *primeIter;
+				if (prime < primeBase)
+					continue;
+				if (exceptSetA.find(prime) != exceptSetA.end())
+					continue;
+				if (exceptSetB.find(prime) != exceptSetB.end())
+					continue;
+
+				auto nextValue = start * prime;
+				if (nextValue >= limit)
+					break;
+
+				ret.emplace_back(generator(nextValue));
+			}
+		};
+		Adder(abc.a, abc.b, abc.a == 1 ? 1 : *(aFactors.factors.rbegin()), bFactors.GetFactors(), cFactors.GetFactors(), [&](long long newA) 
+		{
+			return ABC(newA, abc.b, abc.c);
+		});
+		Adder(abc.b, abc.c, abc.b == 1 ? 1 : *(bFactors.factors.rbegin()), aFactors.GetFactors(), cFactors.GetFactors(), [&](long long newB)
+		{
+			return ABC(abc.a, newB, abc.c);
+		});
+		Adder(abc.c, 120000, abc.c == 1 ? 1 : *(cFactors.factors.rbegin()), aFactors.GetFactors(), bFactors.GetFactors(), [&](long long newC)
+		{
+			return ABC(abc.a, abc.b, newC);
+		});
 		return ret;
 	}
 
@@ -43,17 +65,12 @@ struct ABC
 
 	bool Hit()
 	{
-		if( a >= b )
-			return false;
-		else if( a + b != c )
+		if( a + b != c )
 			return false;
 
-		auto& aFactors = GetPrimeFactors(a);
-		auto& bFactors = GetPrimeFactors(b);
-		auto& cFactors = GetPrimeFactors(c);
-
-		if( (aFactors.HasCommonDivisor(bFactors) || bFactors.HasCommonDivisor(cFactors) || aFactors.HasCommonDivisor(cFactors)) )
-			return false;
+		HeeM::Primes::PrimeFactors& aFactors = g_primes.GetPrimeFactors(a);
+		HeeM::Primes::PrimeFactors& bFactors = g_primes.GetPrimeFactors(b);
+		HeeM::Primes::PrimeFactors& cFactors = g_primes.GetPrimeFactors(c);
 
 		long long rad = aFactors.Rad() * bFactors.Rad() * cFactors.Rad();
 		if (rad >= c)
@@ -68,19 +85,17 @@ struct ABC
 int main()
 {
 	g_primes.Init(5);
-	ABC start(1, 2);
-	PriorityIterater<ABC, &ABC::Next> iter(start);
+	ABC start(1, 1, 1);
+	Iterator<ABC, &ABC::Next> iter(start);
 
 	long long cSum = 0;
 	int count = 0;
 	while(true)
 	{
-		ABC n(0, 0);
+		ABC n(1, 1, 1);
 		if( !iter.GetNext(n) )
 			break;
 		//printf("a: %d, b: %d\n", n.a, n.b);
-		if( n.c >= 3000 )
-			break;
 		if( n.Hit() )
 		{
 			printf("Hit (%lld,%lld,%lld)\n", n.a, n.b, n.c);

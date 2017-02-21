@@ -107,26 +107,39 @@ long long Primes::Rad(long long n)
 	return ret;
 }
 
-Primes::PrimeFactors::PrimeFactors(Primes* primes, long long n) : rad(1)
+HeeM::Primes::PrimeFactors& Primes::GetPrimeFactors(long long n)
 {
-	auto& rPrimes = primes->GetPrimes();
-	auto primeIter = rPrimes.begin();
-	while (n > 0 && primeIter != rPrimes.end())
+	if (n == 1)
 	{
-		auto prime = *primeIter++;
-		size_t presence = 0;
-		while (n % prime == 0)
+		static HeeM::Primes::PrimeFactors base;
+		return base;
+	}
+
+	auto found = primeFactors.find(n);
+	if (found != primeFactors.end())
+	{
+		return found->second;
+	}
+
+	Primes::PrimeFactors ret;
+	auto& primes = GetPrimes();
+	auto primeIter = primes.begin();
+	for (auto primeIter = primes.begin(); primeIter != primes.end(); ++primeIter)
+	{
+		auto prime = *primeIter;
+		if (n % prime == 0)
 		{
-			++presence;
-			n /= prime;
-		}
-		if (presence > 0)
-		{
-			factors.insert(prime);
-			presences.push_back(presence);
-			rad *= prime;
+			auto& pf = GetPrimeFactors(n / prime);
+			auto iter = primeFactors.insert(std::make_pair(n, pf * prime));
+			return iter.first->second;
 		}
 	}
+	throw(std::exception("계산범위초과"));
+}
+
+Primes::PrimeFactors::PrimeFactors() : rad(1)
+{
+	
 }
 
 bool Primes::PrimeFactors::HasCommonDivisor(const PrimeFactors& primeFactors) const
@@ -137,9 +150,27 @@ bool Primes::PrimeFactors::HasCommonDivisor(const PrimeFactors& primeFactors) co
 	return false;
 }
 
-long long Primes::PrimeFactors::Rad()
+const std::set<long long> Primes::PrimeFactors::GetFactors() const
+{
+	return factors;
+}
+
+long long Primes::PrimeFactors::Rad() const
 {
 	return rad;
+}
+
+HeeM::Primes::PrimeFactors Primes::PrimeFactors::operator*(long long prime) const
+{
+	PrimeFactors copy;
+	copy.factors = factors;
+	copy.presence = presence;
+	copy.rad = rad;
+	if (factors.find(prime) == factors.end())
+		copy.rad *= prime;
+	copy.factors.insert(prime);
+	++copy.presence[prime];
+	return copy;
 }
 
 }

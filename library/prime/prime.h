@@ -22,20 +22,27 @@ public:
 
 	struct PrimeFactors
 	{
+		friend class Primes;
+	private:
 		PrimeFactors();
-		PrimeFactors(Primes* primes, long long n);
 		
+	public:
 		bool HasCommonDivisor(const PrimeFactors& primeFactors) const;
-		long long Rad();
+		const std::set<long long> GetFactors() const;
+		long long Rad() const;
+		PrimeFactors operator*(long long n) const;
 		
 		long long rad;
 		std::set<long long> factors;
-		std::vector<size_t> presences;
+		std::map<long long, size_t> presence;
 	};
+
+	PrimeFactors& GetPrimeFactors(long long n);
 
 private:
 	std::vector<long long> primeList;
 	std::vector<bool> primeField;
+	std::map<long long, PrimeFactors> primeFactors;
 	long long mapLimit;
 };
 }
