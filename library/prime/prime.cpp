@@ -114,6 +114,11 @@ HeeM::Primes::PrimeFactors& Primes::GetPrimeFactors(long long n)
 		static HeeM::Primes::PrimeFactors base;
 		return base;
 	}
+	else if (IsPrime(n))
+	{
+		auto iter = primeFactors.insert(std::make_pair(n, GetPrimeFactors(1) * n));
+		return iter.first->second;
+	}
 
 	auto found = primeFactors.find(n);
 	if (found != primeFactors.end())
