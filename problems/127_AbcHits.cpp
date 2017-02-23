@@ -5,44 +5,7 @@
 
 HeeM::Primes g_primes;
 
-struct ABC
-{
-	ABC(int _a, int _b) : a(_a), b(_b), c(a + b)
-	{
-	}
-
-	bool operator<(const ABC& rhs) const
-	{
-		return c > rhs.c ? true :
-			c < rhs.c ? false :
-			a < rhs.a ? true :
-			a > rhs.a ? false :
-			b < rhs.b;
-	}
-
-	bool Hit()
-	{
-		if( a + b != c )
-			return false;
-
-		HeeM::Primes::PrimeFactors& aFactors = g_primes.GetPrimeFactors(a);
-		HeeM::Primes::PrimeFactors& bFactors = g_primes.GetPrimeFactors(b);
-		HeeM::Primes::PrimeFactors& cFactors = g_primes.GetPrimeFactors(c);
-		
-		if (bFactors.HasCommonDivisor(cFactors) || aFactors.HasCommonDivisor(cFactors))
-			return false;
-
-		long long rad = aFactors.Rad() * bFactors.Rad() * cFactors.Rad();
-		if (rad >= c)
-			return false;
-		else
-			return true;
-	}
-
-	long long a, b, c;
-};
 std::set<std::pair<int, int> > g_noSet;
-
 int main()
 {
 	g_primes.Init(6);
@@ -52,28 +15,32 @@ int main()
 
 	const int limit = 120000;
 
-	for (int b = 2; b < limit; ++b)
+	for (int c = 3; c < limit; ++c)
 	{
-		auto bFactors = g_primes.GetPrimeFactors(b);
+		auto& cFactors = g_primes.GetPrimeFactors(c);
 		bool bitholder[limit] = { false, };
-		for (auto prime : bFactors.factors)
+		for (auto prime : cFactors.factors)
 		{
-			for (int i = 1; i * prime < b; ++i)
+			for (int i = 1; i * prime < c; ++i)
 			{
 				bitholder[i * prime] = true;
 			}
 		}
-		for (int a = 1; a < b && a + b < limit; ++a)
+		auto radLimit = c / cFactors.Rad();
+		for (int a = 1; a < c / 2; ++a)
 		{
-			if (bitholder[a])
+			int b = c - a;
+			if (bitholder[a] || bitholder[b])
 				continue;
-			ABC t((long long)a, (long long)b);
-			if (t.Hit())
-			{
-				++count;
-				cSum += t.c;
-				printf("Hit!: (%lld, %lld, %lld)\n", t.a, t.b, t.c);
-			}
+			auto& aFactors = g_primes.GetPrimeFactors(a);
+			auto& bFactors = g_primes.GetPrimeFactors(b);
+			if (aFactors.Rad() * bFactors.Rad() > radLimit)
+				continue;
+			if (aFactors.HasCommonDivisor(bFactors))
+				continue;
+			++count;
+			cSum += c;
+			printf("Hit (%d, %d, %d)\n", a, b, c);
 		}
 	}
 	printf("count: %d, Answer : %lld\n", count, cSum);
