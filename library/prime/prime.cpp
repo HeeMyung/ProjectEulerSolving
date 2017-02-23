@@ -139,7 +139,7 @@ HeeM::Primes::PrimeFactors& Primes::GetPrimeFactors(long long n)
 			return iter.first->second;
 		}
 	}
-	throw(std::exception("계산범위초과"));
+	throw(std::exception());
 }
 
 Primes::PrimeFactors::PrimeFactors() : rad(1)
