@@ -2,12 +2,14 @@
 #include "prime.h"
 #include "iterator.h"
 #include <functional>
+#include <time.h>
 
 HeeM::Primes g_primes;
 
 std::set<std::pair<int, int> > g_noSet;
 int main()
 {
+	int start = time(nullptr);
 	g_primes.Init(6);
 
 	long long cSum = 0;
@@ -43,5 +45,5 @@ int main()
 			printf("Hit (%d, %d, %d)\n", a, b, c);
 		}
 	}
-	printf("count: %d, Answer : %lld\n", count, cSum);
+	printf("count: %d, Answer : %lld, time(sec): %d\n", count, cSum, time(nullptr) - start);
 }
