@@ -18,6 +18,7 @@ void Primes::Init(int limit)
 	long long rLimit = power((long long)10, limit);
 	mapLimit = rLimit;
 	primeField.resize(rLimit);
+	primeField[1] = true;	// 1은 소수가 아니야
 	long long count = 0;
 	for (long long x = 2; x < rLimit; x++)
 	{
