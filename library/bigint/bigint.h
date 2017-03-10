@@ -10,8 +10,10 @@ public:
 	BigInt();
 	~BigInt();
 	BigInt(const int&i);
+	BigInt(const long long& i);
 
 	BigInt operator=(const int& i);
+	BigInt operator=(const long long& i);
 	const std::vector<char>& getInternal() const;
 	std::string toString() const;
 	operator const char*();
@@ -36,6 +38,9 @@ public:
 	BigInt rcut(int start, int end);
 	
 	void fillWith(int size, char value);
+	void Append(BigInt n);
+	
+	static BigInt zero;
 protected:
 	template<class T>
 	static BigInt resolve(T*, int size);

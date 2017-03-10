@@ -4,9 +4,23 @@
 #define checkpoint(x)	{printf("check %s %s %d\n", x,  __FILE__, __LINE__);}
 #define big(a,b)	(a > b ? a : b)
 
+BigInt BigInt::zero(0);
+
 BigInt::BigInt()
 {
 	m_internal.resize(0);
+}
+
+BigInt::BigInt(const long long& i)
+{
+	if (i < 0)
+	{
+		*this = -i;
+	}
+	else
+	{
+		*this = i;
+	}
 }
 
 BigInt::~BigInt()
@@ -39,6 +53,27 @@ BigInt BigInt::operator=(const int& i)
 	while(t > 0)
 	{
 		temp[count++] = t%10;
+		t /= 10;
+	}
+	m_internal.resize(count);
+	memcpy(&m_internal[0], temp, count);
+	return *this;
+}
+
+BigInt BigInt::operator=(const long long& i)
+{
+	char temp[100] = { 0 };
+	long long t = i;
+	int count = 0;
+	if (i == 0)
+	{
+		m_internal.resize(1);
+		m_internal[0] = 0;
+		return *this;
+	}
+	while (t > 0)
+	{
+		temp[count++] = t % 10;
 		t /= 10;
 	}
 	m_internal.resize(count);
@@ -210,7 +245,8 @@ BigInt BigInt::puresubt(const BigInt& bi) const
 		}
 	}
 	// 남은 리스트를 카피한다.
-	memcpy(&temp[i], &me[i], bigsize - i);
+	if (bigsize - i > 0)
+		memcpy(&temp[i], &me[i], bigsize - i);
 
 	BigInt ret = resolve(temp, bigsize);	
 	delete[] temp;
@@ -238,7 +274,6 @@ int BigInt::isBigger(const BigInt& a, const BigInt& b) const
 	const std::vector<char> &my = a.getInternal(), &yours = b.getInternal();
 
 	// after this line.. the two number has same length;;;
-	int i;
 	for(; mysize > 0; --mysize)
 	{
 		if( my[mysize-1] == yours[mysize-1] )
@@ -433,6 +468,20 @@ void BigInt::fillWith(int size, char value)
 	}
 	int i;
 	memset(&m_internal[0], value, size);
+}
+
+
+void BigInt::Append(BigInt n)
+{
+/*
+	real		internal
+	123			321
+	1234        4321
+
+	1231234     4321321
+*/
+	if (n > zero)
+		m_internal.insert(m_internal.begin(), n.getInternal().begin(), n.getInternal().end());
 }
 
 BigInt BigInt::cut(int start, int end)

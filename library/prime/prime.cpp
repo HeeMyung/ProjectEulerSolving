@@ -67,6 +67,30 @@ long long Primes::operator[](int index)
 	}
 	return primeList[index];
 }
+
+long long Primes::GetCommonDenominator(std::vector<long long> params)
+{
+	std::map<long long, size_t> maxFactors;
+	auto FillMaxFactors = [&maxFactors](PrimeFactors& pf)
+	{
+		for (auto factor : pf.GetFactors())
+		{
+			size_t presence = pf.GetPresence(factor);
+			maxFactors[factor] = std::max(presence, maxFactors[factor]);
+		}
+	};
+	for (auto param : params)
+	{
+		auto& pfs = GetPrimeFactors(param);
+		FillMaxFactors(pfs);
+	}
+
+	long long mcd = 1;
+	for (auto mf : maxFactors)
+		mcd *= (long long)std::pow(mf.first, (long long)mf.second);
+	return mcd;
+}
+
 bool Primes::IsCoprime(long long a, long long b)
 {
 	auto min = std::min(a, b);
@@ -159,6 +183,11 @@ bool Primes::PrimeFactors::HasCommonDivisor(const PrimeFactors& primeFactors) co
 const std::set<long long> Primes::PrimeFactors::GetFactors() const
 {
 	return factors;
+}
+
+size_t Primes::PrimeFactors::GetPresence(long long factor)
+{
+	return presence[factor];
 }
 
 long long Primes::PrimeFactors::Rad() const
