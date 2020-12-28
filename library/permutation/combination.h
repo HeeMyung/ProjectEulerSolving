@@ -1,6 +1,8 @@
 #ifndef __COMBINATION_H_
 #define __COMBINATION_H_
 
+#include <vector>
+
 namespace HeeM
 {
 	template<class C>
